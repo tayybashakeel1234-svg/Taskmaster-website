@@ -1,8 +1,10 @@
-export default function DashboardCard({ title, count }) {
+export default function DashboardCard({ title, count, color }) {
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center justify-center">
-      <h3 className="text-gray-500">{title}</h3>
-      <p className="text-3xl font-bold text-gray-900">{count}</p>
+    <div
+      className={`rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition duration-300 ${color}`}
+    >
+      <h3 className="text-lg opacity-80">{title}</h3>
+      <p className="text-4xl font-bold mt-2">{count}</p>
     </div>
   );
 }

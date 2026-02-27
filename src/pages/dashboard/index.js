@@ -1,28 +1,27 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Navbar from "../../components/Navbar";
 import DashboardSidebar from "../../components/DashboardSidebar";
+// import DashboardHeader from "../../components/DashboardHeader";
 import DashboardCard from "../../components/DashboardCard";
-import toast from "react-hot-toast";
 
 export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-
     if (!storedUser) {
-      toast.error("Please login first!");
       router.push("/login");
       return;
     }
 
     const parsed = JSON.parse(storedUser);
-    parsed.id = Number(parsed.id); // 🔥 ensure number
     setUser(parsed);
     fetchTasks(parsed.id);
   }, []);
@@ -32,9 +31,7 @@ export default function Dashboard() {
       query GetTasks($user_id: Int!) {
         tasks(user_id: $user_id) {
           id
-          title
           status
-          due_date
         }
       }
     `;
@@ -49,15 +46,7 @@ export default function Dashboard() {
     });
 
     const data = await res.json();
-
-    if (data.errors) {
-      console.error("Dashboard Fetch Error:", data.errors);
-      return;
-    }
-
-    if (data.data) {
-      setTasks(data.data.tasks);
-    }
+    if (data.data) setTasks(data.data.tasks);
   };
 
   if (!user) return null;
@@ -70,63 +59,60 @@ export default function Dashboard() {
     <>
       <Navbar />
 
-      <div className="flex pt-24 min-h-screen bg-gray-100">
-        <DashboardSidebar />
+       <div className="flex bg-gray-100 pt-16 pb-30">        
+        <DashboardSidebar isOpen={sidebarOpen} />
 
-        <main className="flex-1 p-6">
-          <h1 className="text-3xl font-bold mb-6">
-            Welcome, {user.full_name}
-          </h1>
+        <div className="flex-1 flex flex-col">
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-            <DashboardCard title="Total Tasks" count={total} />
-            <DashboardCard title="Completed Tasks" count={completed} />
-            <DashboardCard title="Pending Tasks" count={pending} />
-          </div>
+          {/* <DashboardHeader
+            isOpen={sidebarOpen}
+            toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          /> */}
 
-          {/* Tasks Table */}
-          <div className="bg-white shadow-md rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Your Tasks</h2>
+          {/* <main className="p-8 flex-1"> */}
+          <main className="ml-34 pt-15 px-15">
 
-            <table className="min-w-full border">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="p-2 border">Title</th>
-                  <th className="p-2 border">Status</th>
-                  <th className="p-2 border">Due Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tasks.map((task) => (
-                  <tr key={task.id}>
-                    <td className="p-2 border">{task.title}</td>
+            <h1 className="text-3xl font-bold mb-8">
+              Welcome, {user.full_name}
+            </h1>
 
-                    <td className="p-2 border">
-                      {task.status === "completed" ? (
-                        <span className="text-green-600 font-semibold">
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="text-yellow-600 font-semibold">
-                          Pending
-                        </span>
-                      )}
-                    </td>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+              <DashboardCard title="Total Tasks" count={total} color="bg-blue-600" />
+              <DashboardCard title="Completed" count={completed} color="bg-green-600" />
+              <DashboardCard title="Pending" count={pending} color="bg-yellow-500" />
+            </div>
 
-                    <td className="p-2 border">
-                      {task.due_date
-                        ? new Date(Number(task.due_date)).toLocaleDateString()
-                        : "N/A"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </main>
+            {/* Feature Boxes */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+              <Box title="Tasks" path="/dashboard/tasks" color="border-blue-500" />
+              <Box title="Analytics" path="/dashboard/analytics" color="border-green-500" />
+              <Box title="Profile" path="/dashboard/profile" color="border-purple-500" />
+              <Box title="Settings" path="/dashboard/settings" color="border-yellow-500" />
+              <Box title="Notifications" path="/dashboard/notifications" color="border-pink-500" />
+
+            </div>
+
+          </main>
+        </div>
       </div>
     </>
   );
 }
 
+function Box({ title, path, color }) {
+  const router = useRouter();
+
+  return (
+    <div
+      onClick={() => router.push(path)}
+      className={`bg-white p-6 rounded-xl shadow hover:shadow-xl cursor-pointer transition transform hover:-translate-y-1 border-l-4 ${color}`}
+    >
+      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+      <p className="text-gray-500">Open {title}</p>
+
+    </div>
+    
+  );
+}

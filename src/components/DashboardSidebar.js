@@ -6,84 +6,81 @@ import {
   FiCheckSquare,
   FiUser,
   FiLogOut,
-  FiMenu,
   FiBarChart2,
-  FiCalendar,
   FiSettings,
   FiBell
 } from "react-icons/fi";
 
 export default function DashboardSidebar() {
-  const [open, setOpen] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <>
-      {/* Mobile toggle button */}
-      <button
-        className="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition"
-        onClick={() => setOpen(!open)}
-      >
-        <FiMenu size={24} />
-      </button>
+    <aside
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`
+        fixed
+        top-16
+        left-0
+        h-[calc(100vh-4rem)]
+        bg-white
+        shadow-lg
+        transition-all
+        duration-300
+        overflow-hidden
+        z-30
+        ${isHovered ? "w-64" : "w-16"}
+      `}
+    >
+      <div className="flex flex-col h-full py-6 justify-between">
 
-      <aside
-        className={`fixed md:static top-0 left-0 bg-white shadow-lg transition-all duration-300 overflow-hidden z-40 ${
-          open ? "w-64" : "w-0"
-        }`}
-      >
-        <div className="flex flex-col h-full p-6 justify-between">
-          {/* Links */}
-          <nav className="flex flex-col space-y-4 font-medium text-gray-700">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-50 hover:text-blue-600 transition"
-            >
-              <FiHome /> Dashboard
-            </Link>
-            <Link
-              href="/dashboard/tasks"
-              className="flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-50 hover:text-blue-600 transition"
-            >
-              <FiCheckSquare /> Tasks
-            </Link>
-            <Link
-              href="/dashboard/profile"
-              className="flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-50 hover:text-blue-600 transition"
-            >
-              <FiUser /> Profile
-            </Link>
-            <Link
-              href="/dashboard/analytics"
-              className="flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-50 hover:text-blue-600 transition"
-            >
-              <FiBarChart2 /> Analytics
-            </Link>
-            <Link
-              href="/dashboard/notifications"
-              className="flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-50 hover:text-blue-600 transition"
-            >
-              <FiBell /> Notifications
-            </Link>
-            <Link
-              href="/dashboard/settings"
-              className="flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-50 hover:text-blue-600 transition"
-            >
-              <FiSettings /> Settings
-            </Link>
-          </nav>
+        {/* Navigation */}
+        <nav className="flex flex-col items-center space-y-6 text-gray-700">
+          <SidebarLink href="/dashboard" icon={<FiHome size={22} />} label="Dashboard" show={isHovered} />
+          <SidebarLink href="/dashboard/tasks" icon={<FiCheckSquare size={22} />} label="Tasks" show={isHovered} />
+          <SidebarLink href="/dashboard/profile" icon={<FiUser size={22} />} label="Profile" show={isHovered} />
+          <SidebarLink href="/dashboard/analytics" icon={<FiBarChart2 size={22} />} label="Analytics" show={isHovered} />
+          <SidebarLink href="/dashboard/notifications" icon={<FiBell size={22} />} label="Notifications" show={isHovered} />
+          <SidebarLink href="/dashboard/settings" icon={<FiSettings size={22} />} label="Settings" show={isHovered} />
+        </nav>
 
-          {/* Sign Out Button */}
+        {/* Logout */}
+        <div className="flex justify-center mb-4">
           <button
             onClick={() => {
               localStorage.removeItem("user");
               window.location.href = "/";
             }}
-            className="flex items-center justify-center gap-2 mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+            className={`flex items-center gap-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition ${
+              isHovered ? "justify-start w-48" : "justify-center w-12"
+            }`}
           >
-            <FiLogOut /> Sign Out
+            <FiLogOut size={19} />
+            {isHovered && <span>Sign Out</span>}
           </button>
         </div>
-      </aside>
-    </>
+
+      </div>
+    </aside>
+  );
+}
+
+function SidebarLink({ href, icon, label, show }) {
+  return (
+    <Link
+      href={href}
+      className={`
+        flex items-center
+        ${show ? "justify-start px-6 w-full" : "justify-center w-12"}
+        py-3
+        rounded-lg
+        hover:bg-blue-50
+        hover:text-blue-600
+        transition
+      `}
+    >
+      {icon}
+      {show && <span className="ml-3 text-sm font-medium">{label}</span>}
+    </Link>
   );
 }

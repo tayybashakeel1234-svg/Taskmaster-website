@@ -23,9 +23,10 @@ export default function Notifications() {
   return (
     <>
       <Navbar />
-      <div className="flex pt-24 min-h-screen bg-gray-100">
+      <div className="flex pt-35 p-20 min-h-screen bg-gray-100">
         <DashboardSidebar />
-        <main className="flex-1 p-6 overflow-auto">
+        {/* <main className="flex-1 p-6 overflow-auto"> */}
+         <main className="flex-1 ml-16  px-6">
           <h1 className="text-3xl font-bold mb-6">Notifications</h1>
 
           <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col gap-4">

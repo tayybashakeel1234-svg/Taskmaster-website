@@ -94,10 +94,11 @@ export default function Profile() {
   return (
     <>
       <Navbar />
-      <div className="flex pt-24 min-h-screen bg-gray-100">
+      <div className="flex pt-35 p-20 min-h-screen bg-gray-100">
         <DashboardSidebar />
 
-        <main className="flex-1 p-8">
+        {/* <main className="flex-1 p-8"> */}
+         <main className="flex-1 ml-16  px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Profile Info */}
             <div className="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center">
